@@ -4,11 +4,12 @@ import { Book } from '../shared/book';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SignedOutBook } from '../shared/signed-out-book';
-import { map } from 'lodash';
 import { GoogleBooksMetadata } from '../shared/google-books-metadata';
 import { Observable } from 'rxjs/internal/Observable';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 @Injectable()
 export class BooksService {
@@ -53,8 +54,11 @@ export class BooksService {
    * @memberof BooksService
    */
   getTotalNumberOfCopiesInLibrary(libraryId: number, bookId: number): Observable<number> {
-    // TODO: Add implementation
-    return of(0);
+    const url = `${this.apiUrl}${libraryId}/books`;
+    return this.http.get<LibraryBook[]>(url)
+      .pipe(
+        map(items => items.find(item => item.book.bookId === bookId).totalPurchasedByLibrary)
+      );
   }
 
   /**
@@ -67,8 +71,16 @@ export class BooksService {
    * @memberof BooksService
    */
   getNumberOfAvailableBookCopies(libraryId: number, bookId: number): Observable<number> {
-    // TODO: Add implementation
-    return throwError('Not Implemented');
+    const url = `${this.apiUrl}${libraryId}/books`;
+    return forkJoin([
+      this.http.get<LibraryBook[]>(url),
+      this.getCheckedOutBooks(libraryId)
+    ])
+      .pipe(
+        map(([libraryBooks, getCheckedOutBooks]) => {
+          return libraryBooks.find(libraryBook => libraryBook.book.bookId === bookId).totalPurchasedByLibrary - getCheckedOutBooks.filter(getCheckedOutBook => getCheckedOutBook.bookId === bookId).length;
+        })
+      )
   }
 
   checkOutBook(libraryId: number, bookId: number, memberId: number): Observable<SignedOutBook> {

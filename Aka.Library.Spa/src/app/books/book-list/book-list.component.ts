@@ -3,12 +3,12 @@ import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { BooksService } from '../../services/books.service';
 import { Library } from '../../shared/library';
 import { Component, OnInit, Input, ViewChild, AfterViewInit, HostBinding } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, zip } from 'rxjs';
 import { Book } from '../../shared/book';
 import { slideInDownAnimation } from '../../animations';
 import { Router, ActivatedRoute } from '@angular/router';
 import { map as lmap, unionBy } from 'lodash';
-import { map } from 'rxjs/operators';
+import { map, mergeAll } from 'rxjs/operators';
 
 @Component({
   selector: 'app-book-list',
@@ -18,8 +18,8 @@ import { map } from 'rxjs/operators';
 })
 export class BookListComponent implements OnInit, AfterViewInit {
   @HostBinding('@routeAnimation') routeAnimation = true;
-  @HostBinding('style.display')   display = 'block';
-  @HostBinding('style.position')  position = 'initial';
+  @HostBinding('style.display') display = 'block';
+  @HostBinding('style.position') position = 'initial';
 
   currentLibrary: Library;
   displayedColumns = ['bookId', 'title', 'isbn', 'dateOfPublication', 'availability'];
@@ -34,18 +34,23 @@ export class BookListComponent implements OnInit, AfterViewInit {
     this.currentLibrary = value;
 
     if (value != null) {
-      forkJoin([
-        this.books.getBooks(this.currentLibrary.libraryId),
-        this.books.getAvailableBooks(this.currentLibrary.libraryId)
-      ])
+      this.books.getBooks(this.currentLibrary.libraryId)
         .pipe(
-          map(([books, availableBooks]) => {
-            return unionBy(lmap(availableBooks, (book: Book) => ({ ...book, isAvailable: true })), books, 'bookId');
-          })
+          map(books => {
+            const obss = books.map(book => forkJoin([
+              this.books.getBook(this.currentLibrary.libraryId, book.bookId),
+              this.books.getNumberOfAvailableBookCopies(this.currentLibrary.libraryId, book.bookId)
+            ])
+              .pipe(
+                map(([book, availableCopies]) => ({ ...book, isAvailable: availableCopies > 0 }))
+              ));
+            return zip(...obss)
+          }),
+          mergeAll()
         )
-        .subscribe((books: Book []) => {
-          this.dataSource.data = books;
-        });
+        .subscribe(books => {
+          this.dataSource.data = books
+        })
     }
   }
 

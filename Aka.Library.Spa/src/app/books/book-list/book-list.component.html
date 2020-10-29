@@ -19,19 +19,19 @@
       <mat-cell *matCellDef="let element">{{element.title}}</mat-cell>
     </ng-container>
 
-    <!-- Weight Column -->
+    <!-- ISBN Column -->
     <ng-container matColumnDef="isbn">
       <mat-header-cell *matHeaderCellDef mat-sort-header> ISBN </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.isbn}} </mat-cell>
     </ng-container>
 
-    <!-- Weight Column -->
+    <!-- Date of Publication Column -->
     <ng-container matColumnDef="dateOfPublication">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Date of publications </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.dateOfPublication | date:'fullDate'}} </mat-cell>
     </ng-container>
 
-    <!-- Weight Column -->
+    <!-- Availability Column -->
     <ng-container matColumnDef="availability">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Available </mat-header-cell>
       <mat-cell *matCellDef="let element"><mat-icon>{{element.isAvailable ? 'done' : 'clear'}}</mat-icon></mat-cell>
