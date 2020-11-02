@@ -5,7 +5,7 @@ import { Component, OnInit, HostBinding } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Member } from '../interfaces/member';
-import { switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { MemberBook } from '../interfaces/member-book';
 
@@ -48,13 +48,43 @@ export class MemberDetailsComponent implements OnInit {
     this.member$ = this.route.paramMap
       .pipe(
         switchMap((params: ParamMap) =>
-        this.service.getMember(+params.get('id'))),
+          this.service.getMember(+params.get('id'))),
         tap(m => {
           this.firstName = m.fullName.split(' ')[0];
           this.lastName = m.fullName.split(' ')[1];
           this.postalCode = m.postalCode;
         })
       );
+
+    this.bookhistory$ = this.service.getMemberBookHistory(this.auth.currentMember)
+      .pipe(
+        map(signedOutBooks =>
+          signedOutBooks.map(signedOutBook => {
+            return {
+              libraryId: signedOutBook.libraryId,
+              bookId: signedOutBook.bookId,
+              memberId: signedOutBook.memberId,
+              whenSignedOut: new Date(signedOutBook.whenSignedOut),
+              whenReturned: new Date(signedOutBook.whenReturned)
+            }
+          })
+        )
+      )
+
+    this.signedout$ = this.service.getSignedOutBooks(this.auth.currentMember)
+      .pipe(
+        map(signedOutBooks =>
+          signedOutBooks.map(signedOutBook => {
+            return {
+              libraryId: signedOutBook.libraryId,
+              bookId: signedOutBook.bookId,
+              memberId: signedOutBook.memberId,
+              whenSignedOut: new Date(signedOutBook.whenSignedOut),
+              whenReturned: new Date(signedOutBook.whenReturned)
+            }
+          })
+        )
+      )
   }
 
   onSubmit() {

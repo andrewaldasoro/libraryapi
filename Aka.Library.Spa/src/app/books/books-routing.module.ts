@@ -6,7 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   { path: '', redirectTo: 'list', pathMatch: 'full' },
   { path: 'list', component: BookListComponent },
-  { path: ':id', component: BookDetailsComponent },
+  { path: ':id', component: BookDetailsComponent }
 ];
 
 @NgModule({

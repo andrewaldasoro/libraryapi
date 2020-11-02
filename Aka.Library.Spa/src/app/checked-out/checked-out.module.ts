@@ -3,17 +3,21 @@ import { CommonModule } from '@angular/common';
 import { CheckedOutBooksComponent } from './checked-out-books/checked-out-books.component';
 import { LibraryMatModule } from '../library-mat.module';
 import { CheckedOutRoutingModule } from './checked-out-routing.module';
-import { CheckOutPreviousComponent } from './check-out-previous/check-out-previous.component';
+import { CheckedOutHistoryComponent } from './checked-out-history/checked-out-history.component';
 
 @NgModule({
   declarations: [
     CheckedOutBooksComponent,
-    CheckOutPreviousComponent
+    CheckedOutHistoryComponent
   ],
   imports: [
     CommonModule,
     CheckedOutRoutingModule,
     LibraryMatModule
+  ],
+  exports: [
+    CheckedOutBooksComponent,
+    CheckedOutHistoryComponent
   ]
 })
 export class CheckedOutModule { }

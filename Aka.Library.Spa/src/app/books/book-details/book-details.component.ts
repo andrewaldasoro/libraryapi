@@ -41,7 +41,8 @@ export class BookDetailsComponent implements OnInit {
       .subscribe((params: ParamMap) => {
         const libraryId = +params.get('lid');
         const bookId = +params.get('id');
-        this.getBookDetails(libraryId, bookId);
+        this.getBookDetails(libraryId, bookId)
+          .subscribe(bookDetails => this.book = bookDetails);
       });
   }
 
@@ -52,8 +53,7 @@ export class BookDetailsComponent implements OnInit {
    * @memberof BookDetailsComponent
    */
   isMaximumNumberOfBooksSignedOut(): boolean {
-    // TODO: Implement check
-    return false;
+    return this.numBooksSignedOut >= 2;
   }
 
   checkOutBook() {
@@ -65,7 +65,8 @@ export class BookDetailsComponent implements OnInit {
       .subscribe(() => {
         const libraryId = +params.get('lid');
         const bookId = +params.get('id');
-        this.getBookDetails(libraryId, bookId);
+        this.getBookDetails(libraryId, bookId)
+          .subscribe(bookDetails => this.book = bookDetails);
       });
   }
 
@@ -78,7 +79,8 @@ export class BookDetailsComponent implements OnInit {
       .subscribe(() => {
         const libraryId = +params.get('lid');
         const bookId = +params.get('id');
-        this.getBookDetails(libraryId, bookId);
+        this.getBookDetails(libraryId, bookId)
+          .subscribe(bookDetails => this.book = bookDetails);
       });
   }
 
@@ -90,7 +92,7 @@ export class BookDetailsComponent implements OnInit {
    * @memberof BookDetailsComponent
    */
   getBookDetails(libraryId: number, bookId: number) {
-    forkJoin([
+    return forkJoin([
       this.books.getBook(libraryId, bookId),
       this.books.getNumberOfAvailableBookCopies(libraryId, bookId),
       this.memberService.getSignedOutBooks(this.authService.currentMember)

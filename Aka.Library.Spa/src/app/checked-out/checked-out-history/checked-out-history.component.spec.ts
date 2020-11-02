@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CheckOutPreviousComponent } from './check-out-previous.component';
+import { CheckedOutHistoryComponent } from './checked-out-history.component';
 
-describe('CheckOutPreviousComponent', () => {
-  let component: CheckOutPreviousComponent;
-  let fixture: ComponentFixture<CheckOutPreviousComponent>;
+describe('CheckedOutHistoryComponent', () => {
+  let component: CheckedOutHistoryComponent;
+  let fixture: ComponentFixture<CheckedOutHistoryComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CheckOutPreviousComponent ]
+      declarations: [ CheckedOutHistoryComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CheckOutPreviousComponent);
+    fixture = TestBed.createComponent(CheckedOutHistoryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

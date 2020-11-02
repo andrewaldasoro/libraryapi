@@ -7,7 +7,6 @@ import { forkJoin, zip } from 'rxjs';
 import { Book } from '../../shared/book';
 import { slideInDownAnimation } from '../../animations';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map as lmap, unionBy } from 'lodash';
 import { map, mergeAll } from 'rxjs/operators';
 
 @Component({
@@ -16,7 +15,7 @@ import { map, mergeAll } from 'rxjs/operators';
   styleUrls: ['./book-list.component.scss'],
   animations: [slideInDownAnimation]
 })
-export class BookListComponent implements OnInit, AfterViewInit {
+export class BookListComponent implements AfterViewInit {
   @HostBinding('@routeAnimation') routeAnimation = true;
   @HostBinding('style.display') display = 'block';
   @HostBinding('style.position') position = 'initial';
@@ -58,9 +57,6 @@ export class BookListComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  ngOnInit() {
   }
 
   selectRow(book: Book) {

@@ -7,7 +7,6 @@ import { SignedOutBook } from '../shared/signed-out-book';
 import { GoogleBooksMetadata } from '../shared/google-books-metadata';
 import { Observable } from 'rxjs/internal/Observable';
 import { throwError } from 'rxjs/internal/observable/throwError';
-import { of } from 'rxjs/internal/observable/of';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 
@@ -102,12 +101,25 @@ export class BooksService {
    * @memberof BooksService
    */
   getBookMetaData(isbn: string): Observable<GoogleBooksMetadata> {
-    // TODO: Add implementation
-    const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${this.googleBooksAPIKey}`;
+    const isbnNumber = isbn.replace("-", "")
+    const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbnNumber}&key=${this.googleBooksAPIKey}`;
 
-    // return this.http.get(url);
-    return throwError('Funtion not implemented');
-
+    return this.http.get<{
+      items: Array<{
+        volumeInfo: GoogleBooksMetadata
+      }>,
+      kind: "books#volumes",
+      totalItems: number
+    }>(url)
+      .pipe(
+        map(volumes => {
+          if (volumes.items) {
+            return volumes.items[0].volumeInfo
+          } else {
+            throwError("Book metadata not fouded on google")
+          }
+        })
+      );
   }
 
 }

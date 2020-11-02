@@ -6,10 +6,12 @@ import { CommonModule } from '@angular/common';
 import { MembersRoutingModule } from './members-routing.module';
 import { MemberListComponent } from './member-list/member-list.component';
 import { MemberDetailsComponent } from './member-details/member-details.component';
+import { CheckedOutModule } from '../checked-out/checked-out.module';
 
 @NgModule({
   imports: [
     CommonModule,
+    CheckedOutModule,
     MembersRoutingModule,
     LibraryMatModule
   ],
